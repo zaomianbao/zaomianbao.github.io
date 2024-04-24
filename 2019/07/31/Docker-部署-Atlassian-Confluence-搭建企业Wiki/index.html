@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Docker 部署 Atlassian Confluence 搭建企业Wiki | 枣面包 | 读书、记录、技术、成长</title>
+
+  
+  <meta name="author" content="枣面包">
+  
+
+  
+  <meta name="description" content="枣面包的博客,主要用于发布读书笔记、生活随想、技术文章，记录个人成长经历">
+  
+
+  
+  <meta name="keywords" content="枣面包,zaomianbao,枣面包的博客">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Docker 部署 Atlassian Confluence 搭建企业Wiki"/>
+
+  <meta property="og:site_name" content="枣面包"/>
+
+  
+  <meta property="og:image" content="https://www.zaomianbao.com/favicon.ico"/>
+  
+
+  <link href="https://www.zaomianbao.com/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="枣面包" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">枣面包</a>
+    </h1>
+    <p class="site-description">读书、记录、技术、成长</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Docker 部署 Atlassian Confluence 搭建企业Wiki</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2019/07/31/Docker-部署-Atlassian-Confluence-搭建企业Wiki/" rel="bookmark">
+        <time class="entry-date published" datetime="2019-07-31T10:10:25.000Z">
+          2019-07-31
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>公司企业wiki就是使用Confluence搭建的，产品研发过程中的需求文档、产品设计文档、项目管理文档、技术文档、运维文档等等都统一发布在wiki中，并不断地迭代维护。所以想着自己的协同的办公也可使用Confluence来实现。</p>
+<p>一开始是通过非容器的形式部署Confluence，但是过程稍显繁杂，后面从运维那得知Docker中有Confluence的镜像，一切就变得简单了。</p>
+<hr>
+<ul>
+<li>环境：CentOS7.2</li>
+<li>容器：Docker</li>
+<li>镜像：atlassian&#x2F;confluence-server</li>
+<li>辅助：Mysql</li>
+</ul>
+<hr>
+<p>在一切开始之前先启动我们的CentOS7.2，然后再启动Docker，因为后面mysql和confluence的安装和部署全部是在Docker中完成(CentOS系统、Docker的安装和使用可以查看博主相关的博文)</p>
+<p>下面是启动docker的指令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<h2 id="一-安装并配置Mysql"><a href="#一-安装并配置Mysql" class="headerlink" title="一.安装并配置Mysql"></a>一.安装并配置Mysql</h2><p>建议重新安装mysql，博主在部署完confluence使用现有的mysql时出现了各种问题，主要出在配置文件上，但是配置文件的内容适用于博主的以往的其他服务，在不影响以往服务和数据的前提下，博主选择重新安装并配置mysql。</p>
+<h3 id="1-搜索mysql镜像"><a href="#1-搜索mysql镜像" class="headerlink" title="1.搜索mysql镜像"></a>1.搜索mysql镜像</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# docker search mysql</span><br><span class="line">NAME                              DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED</span><br><span class="line">mysql                             MySQL is a widely used, open-source relation…   8474                [OK]                </span><br><span class="line">mariadb                           MariaDB is a community-developed fork of MyS…   2923                [OK]                </span><br><span class="line">mysql/mysql-server                Optimized MySQL Server Docker images. Create…   626                                     [OK]</span><br><span class="line">percona                           Percona Server is a fork of the MySQL relati…   441                 [OK]                </span><br><span class="line">centurylink/mysql                 Image containing mysql. Optimized to be link…   60   </span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="2-拉取镜像"><a href="#2-拉取镜像" class="headerlink" title="2.拉取镜像"></a>2.拉取镜像</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# docker pull mysql:5.7</span><br></pre></td></tr></table></figure>
+<h3 id="3-查看镜像"><a href="#3-查看镜像" class="headerlink" title="3.查看镜像"></a>3.查看镜像</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# docker images</span><br><span class="line">REPOSITORY                    TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">mysql                         5.7              2151acc12881        2 weeks ago         445MB</span><br></pre></td></tr></table></figure>
+<h3 id="4-创建映射数据目录和配置设置"><a href="#4-创建映射数据目录和配置设置" class="headerlink" title="4.创建映射数据目录和配置设置"></a>4.创建映射数据目录和配置设置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# mkdir -p /export/config/mysql</span><br><span class="line">[root@centos7-1 ~]# touch /export/config/mysql/mysqld.cnf</span><br><span class="line">[root@centos7-1 ~]# mkdir -p /export/data/mysql</span><br><span class="line">[root@centos7-1 ~]# vi /export/config/mysql/mysqld.cnf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>mysqld.cnf配置的内容如下(前面一部分是mysql默认的配置内容，后面7行配置时confluence官网指定的自定义配置)，直接粘贴复制到mysqld.cnf文件即可</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># This program is free software; you can redistribute it and/or modify</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">it under the terms of the GNU General Public License as published by</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">the Free Software Foundation; version 2 of the License.</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># This program is distributed in the hope that it will be useful,</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">but WITHOUT ANY WARRANTY; without even the implied warranty of</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">GNU General Public License <span class="keyword">for</span> more details.</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># You should have received a copy of the GNU General Public License</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">along with this program; <span class="keyword">if</span> not, write to the Free Software</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># The MySQL  Server configuration file.</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># For explanations see</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">http://dev.mysql.com/doc/mysql/en/server-system-variables.html</span></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line">pid-file        = /var/run/mysqld/mysqld.pid</span><br><span class="line">socket          = /var/run/mysqld/mysqld.sock</span><br><span class="line">datadir         = /var/lib/mysql</span><br><span class="line">log-error      = /var/log/mysql/error.log</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">By default we only accept connections from localhost</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">bind-address   = 127.0.0.1</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Disabling symbolic-links is recommended to prevent assorted security risks</span></span><br><span class="line">symbolic-links=0</span><br><span class="line"></span><br><span class="line">character-set-server=utf8</span><br><span class="line">collation-server=utf8_bin</span><br><span class="line"></span><br><span class="line">default-storage-engine=INNODB</span><br><span class="line"></span><br><span class="line">max_allowed_packet=256M</span><br><span class="line"></span><br><span class="line">innodb_log_file_size=2GB</span><br><span class="line"></span><br><span class="line">transaction-isolation=READ-COMMITTED</span><br><span class="line"></span><br><span class="line">binlog_format=row</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-启动mysql"><a href="#5-启动mysql" class="headerlink" title="5.启动mysql"></a>5.启动mysql</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# docker run --name mysql8 -p 3306:3306 -v /export/config/mysql8/mysqld.cnf:/etc/mysql/my.cnf -v /export/data/mysql8:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql</span><br></pre></td></tr></table></figure>
+<h3 id="6-查看mysql容器"><a href="#6-查看mysql容器" class="headerlink" title="6.查看mysql容器"></a>6.查看mysql容器</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS                     PORTS                               NAMES</span><br><span class="line">a948c9eb4389        mysql                         &quot;docker-entrypoint.s…&quot;   8 minutes ago       Up 8 minutes               0.0.0.0:3306-&gt;3306/tcp, 33060/tcp   mysql8</span><br></pre></td></tr></table></figure>
+<h3 id="7-进入mysql容器"><a href="#7-进入mysql容器" class="headerlink" title="7.进入mysql容器"></a>7.进入mysql容器</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# docker exec -it mysql bash</span><br><span class="line">root@a948c9eb4389:/# </span><br></pre></td></tr></table></figure>
+<h3 id="8-登录mysql"><a href="#8-登录mysql" class="headerlink" title="8.登录mysql"></a>8.登录mysql</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">root@a948c9eb4389:/# mysql -u root -p</span><br><span class="line">Enter password:</span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 4</span><br><span class="line">Server version: 5.7.27 MySQL Community Server (GPL)</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">mysql&gt; </span></span><br></pre></td></tr></table></figure>
+<p>在上面的过程中需要输入密码，密码为启动容器时设定的密码123456</p>
+<h3 id="9-设置root用户"><a href="#9-设置root用户" class="headerlink" title="9.设置root用户"></a>9.设置root用户</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">mysql&gt; </span><span class="language-bash">ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;1Aa@11&#x27;</span>;</span></span><br><span class="line">Query OK, 0 rows affected (0.51 sec)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">mysql&gt; </span></span><br></pre></td></tr></table></figure>
+<p>安全考虑，设置root用户只能本地登录</p>
+<h3 id="10-添加登录用户"><a href="#10-添加登录用户" class="headerlink" title="10.添加登录用户"></a>10.添加登录用户</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">mysql&gt; </span><span class="language-bash">CREATE USER <span class="string">&#x27;zaomianbao&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;1Aa@11&#x27;</span>;</span></span><br><span class="line">Query OK, 0 rows affected (0.02 sec)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">mysql&gt; </span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="11-设置允许远程登录"><a href="#11-设置允许远程登录" class="headerlink" title="11.设置允许远程登录"></a>11.设置允许远程登录</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">mysql&gt; </span><span class="language-bash">GRANT ALL PRIVILEGES ON *.* TO <span class="string">&#x27;zaomianbao&#x27;</span>@<span class="string">&#x27;%&#x27;</span>;</span>          </span><br><span class="line">Query OK, 0 rows affected (0.01 sec)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">mysql&gt; </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="12-刷新权限"><a href="#12-刷新权限" class="headerlink" title="12.刷新权限"></a>12.刷新权限</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">mysql&gt; </span><span class="language-bash">FLUSH PRIVILEGES;</span></span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">mysql&gt; </span></span><br></pre></td></tr></table></figure>
+
+<h3 id="13-客户端远程连接mysql"><a href="#13-客户端远程连接mysql" class="headerlink" title="13.客户端远程连接mysql"></a>13.客户端远程连接mysql</h3><p><img src="https://img-blog.csdnimg.cn/20190812101834455.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="二-部署并配置Confluence"><a href="#二-部署并配置Confluence" class="headerlink" title="二.部署并配置Confluence"></a>二.部署并配置Confluence</h2><h3 id="1-搜索、拉取、查看confluence镜像"><a href="#1-搜索、拉取、查看confluence镜像" class="headerlink" title="1.搜索、拉取、查看confluence镜像"></a>1.搜索、拉取、查看confluence镜像</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# docker search confluence</span><br><span class="line">NAME                                       DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED</span><br><span class="line">atlassian/confluence-server                Official Confluence Server image – create, o…   319                                     [OK]</span><br><span class="line">blacklabelops/confluence                   Dockerized Atlassian Confluence                 41                                      [OK]</span><br><span class="line">derjudge/confluence                        A batteries-included image for running Atlas…   12                                      [OK]</span><br><span class="line">goellnerit/confluence-docker                                                               8                                       [OK]</span><br><span class="line">...</span><br><span class="line">[root@centos7-1 ~]# docker pull atlassian/confluence-server</span><br><span class="line">...</span><br><span class="line">[root@centos7-1 ~]# docker images </span><br><span class="line">REPOSITORY                    TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">atlassian/confluence-server   latest              8e02e7d24a38        1 minites ago         822MB</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="2-启动confluence"><a href="#2-启动confluence" class="headerlink" title="2.启动confluence"></a>2.启动confluence</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# mkdir /export/data/confluence</span><br><span class="line">[root@centos7-1 ~]# docker run -v /export/data/confluence/:/var/atlassian/application-data/confluence/ --name=&quot;confluence&quot; -d -p 8090:8090 -p 8091:8091 atlassian/confluence-server</span><br><span class="line">e6b421dc43d352f1e1f57a4d50d8cdd8441683bfc087d99829753ad1bea0ee67</span><br><span class="line">[root@centos7-1 ~]# </span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看confluence容器状态"><a href="#3-查看confluence容器状态" class="headerlink" title="3.查看confluence容器状态"></a>3.查看confluence容器状态</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS                   PORTS                               NAMES</span><br><span class="line">e6b421dc43d3        atlassian/confluence-server   &quot;/tini -- /entrypoin…&quot;   40 seconds ago      Up 38 seconds            0.0.0.0:8090-8091-&gt;8090-8091/tcp    confluence</span><br><span class="line">a948c9eb4389        mysql                         &quot;docker-entrypoint.s…&quot;   48 minutes ago      Up 48 minutes            0.0.0.0:3306-&gt;3306/tcp, 33060/tcp   mysql8</span><br></pre></td></tr></table></figure>
+<p>上面显示”Up 38 seconds”，已运行38秒，代表容器正常启动了</p>
+<h3 id="4-破解confluence"><a href="#4-破解confluence" class="headerlink" title="4.破解confluence"></a>4.破解confluence</h3><h4 id="a-下载相关jar文件"><a href="#a-下载相关jar文件" class="headerlink" title="a.下载相关jar文件"></a>a.下载相关jar文件</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# mkdir -p /export/software</span><br><span class="line">[root@centos7-1 ~]# cd /export/software/</span><br><span class="line">[root@centos7-1 software]# wget http://cdn-blog.oss-cn-beijing.aliyuncs.com/k2p-frp/atlassian-extras-decoder-v2-3.2.jar</span><br><span class="line">[root@centos7-1 software]# wget http://cdn-blog.oss-cn-beijing.aliyuncs.com/k2p-frp/atlassian-universal-plugin-manager-plugin-2.22.jar</span><br><span class="line">[root@centos7-1 software]# ls</span><br><span class="line">atlassian-universal-plugin-manager-plugin-2.22.jar  atlassian-extras-decoder-v2-3.2.jar</span><br></pre></td></tr></table></figure>
+<h4 id="b-进入confluence容器"><a href="#b-进入confluence容器" class="headerlink" title="b.进入confluence容器"></a>b.进入confluence容器</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 software]# cd</span><br><span class="line">[root@centos7-1 ~]# docker exec -it confluence bash</span><br><span class="line">root@e6b421dc43d3:/var/atlassian/application-data/confluence# </span><br></pre></td></tr></table></figure>
+<h4 id="c-用下载的文件替换confluence中的atlassian-extras-decoder-v2-xxx-jar-atlassian-universal-plugin-manager-plugin-xxx-jar文件"><a href="#c-用下载的文件替换confluence中的atlassian-extras-decoder-v2-xxx-jar-atlassian-universal-plugin-manager-plugin-xxx-jar文件" class="headerlink" title="c.用下载的文件替换confluence中的atlassian-extras-decoder-v2-xxx.jar&#x2F;atlassian-universal-plugin-manager-plugin-xxx.jar文件"></a>c.用下载的文件替换confluence中的atlassian-extras-decoder-v2-xxx.jar&#x2F;atlassian-universal-plugin-manager-plugin-xxx.jar文件</h4><p>先备份confluence中原先的jar，这里是将2个jar移至mnt目录下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@e6b421dc43d3:/var/atlassian/application-data/confluence# mv /opt/atlassian/confluence/confluence/WEB-INF/lib/atlassian-extras-decoder-v2-3.4.1.jar /mnt/</span><br><span class="line">root@e6b421dc43d3:/var/atlassian/application-data/confluence# mv /opt/atlassian/confluence/confluence/WEB-INF/atlassian-bundled-plugins/atlassian-universal-plugin-manager-plugin-3.0.1.jar /mnt/</span><br></pre></td></tr></table></figure>
+<p>备份好文件后，退出confluence容器。拷贝下载的文件到confluence容器中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@e6b421dc43d3:/var/atlassian/application-data/confluence# exit</span><br><span class="line">exit</span><br><span class="line">[root@centos7-1 ~]# cd /export/software/</span><br><span class="line">[root@centos7-1 software]# docker cp atlassian-extras-decoder-v2-3.2.jar confluence:/opt/atlassian/confluence/confluence/WEB-INF/lib/</span><br><span class="line">[root@centos7-1 software]# docker cp atlassian-universal-plugin-manager-plugin-2.22.jar confluence:/opt/atlassian/confluence/confluence/WEB-INF/atlassian-bundled-plugins/</span><br></pre></td></tr></table></figure>
+<p>重新启动confluence</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 software]# cd</span><br><span class="line">[root@centos7-1 ~]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS                   PORTS                               NAMES</span><br><span class="line">e6b421dc43d3        atlassian/confluence-server   &quot;/tini -- /entrypoin…&quot;   48 minutes ago      Up 48 minutes            0.0.0.0:8090-8091-&gt;8090-8091/tcp    confluence</span><br><span class="line">a948c9eb4389        mysql                         &quot;docker-entrypoint.s…&quot;   2 hours ago         Up 2 hours               0.0.0.0:3306-&gt;3306/tcp, 33060/tcp   mysql8</span><br><span class="line">[root@centos7-1 ~]# docker restart e6b421dc43d3</span><br><span class="line">e6b421dc43d3</span><br><span class="line">[root@centos7-1 ~]# </span><br></pre></td></tr></table></figure>
+<h3 id="5-设置confluence"><a href="#5-设置confluence" class="headerlink" title="5.设置confluence"></a>5.设置confluence</h3><h4 id="a-浏览器访问confluence-ip-port"><a href="#a-浏览器访问confluence-ip-port" class="headerlink" title="a.浏览器访问confluence(ip:port)"></a>a.浏览器访问confluence(ip:port)<img src="https://img-blog.csdnimg.cn/20190812121705917.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></h4><h4 id="b-语言设置"><a href="#b-语言设置" class="headerlink" title="b.语言设置"></a>b.语言设置</h4><p><img src="https://img-blog.csdnimg.cn/20190812121757388.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>选完”中文”后，点击”Next“</p>
+<h4 id="c-选择”产品安装”"><a href="#c-选择”产品安装”" class="headerlink" title="c.选择”产品安装”"></a>c.选择”产品安装”</h4><p><img src="https://img-blog.csdnimg.cn/20190812121907273.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="d-点击下一步，直到显示出该页面"><a href="#d-点击下一步，直到显示出该页面" class="headerlink" title="d.点击下一步，直到显示出该页面"></a>d.点击下一步，直到显示出该页面</h4><p><img src="https://img-blog.csdnimg.cn/20190812122006605.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="e-点击”获取试用授权”"><a href="#e-点击”获取试用授权”" class="headerlink" title="e.点击”获取试用授权”"></a>e.点击”获取试用授权”</h4><p><img src="https://img-blog.csdnimg.cn/20190812122247165.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="f-进入到该页面后按照图示选择，最后点击”Generate-License”"><a href="#f-进入到该页面后按照图示选择，最后点击”Generate-License”" class="headerlink" title="f.进入到该页面后按照图示选择，最后点击”Generate License”"></a>f.进入到该页面后按照图示选择，最后点击”Generate License”</h4><p><img src="https://img-blog.csdnimg.cn/20190812122339759.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="g-进入到下面的页面后等待一段时间会弹窗确认ip"><a href="#g-进入到下面的页面后等待一段时间会弹窗确认ip" class="headerlink" title="g.进入到下面的页面后等待一段时间会弹窗确认ip"></a>g.进入到下面的页面后等待一段时间会弹窗确认ip</h4><p><img src="https://img-blog.csdnimg.cn/20190812122524421.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="h-点击”Yes”后会跳回到授权码页面，点击”下一步”即可"><a href="#h-点击”Yes”后会跳回到授权码页面，点击”下一步”即可" class="headerlink" title="h.点击”Yes”后会跳回到授权码页面，点击”下一步”即可"></a>h.点击”Yes”后会跳回到授权码页面，点击”下一步”即可</h4><p><img src="https://img-blog.csdnimg.cn/20190812122623609.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="i-选择”我自己的数据库”，点击”下一步”"><a href="#i-选择”我自己的数据库”，点击”下一步”" class="headerlink" title="i.选择”我自己的数据库”，点击”下一步”"></a>i.选择”我自己的数据库”，点击”下一步”</h4><p><img src="https://img-blog.csdnimg.cn/20190812122703546.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="j-你会看到以下画面，选择你自己的数据库即可，博主的是Mysql"><a href="#j-你会看到以下画面，选择你自己的数据库即可，博主的是Mysql" class="headerlink" title="j.你会看到以下画面，选择你自己的数据库即可，博主的是Mysql"></a>j.你会看到以下画面，选择你自己的数据库即可，博主的是Mysql<img src="https://img-blog.csdnimg.cn/201908121228265.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></h4><p>切换成Mysql会显示出以下画面<br><img src="https://img-blog.csdnimg.cn/20190812122840633.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="k-下载mysql连接驱动，并将其复制到confluence的-opt-atlassian-confluence-confluence-WEB-INF-lib目录下"><a href="#k-下载mysql连接驱动，并将其复制到confluence的-opt-atlassian-confluence-confluence-WEB-INF-lib目录下" class="headerlink" title="k.下载mysql连接驱动，并将其复制到confluence的&#x2F;opt&#x2F;atlassian&#x2F;confluence&#x2F;confluence&#x2F;WEB-INF&#x2F;lib目录下"></a>k.下载mysql连接驱动，并将其复制到confluence的&#x2F;opt&#x2F;atlassian&#x2F;confluence&#x2F;confluence&#x2F;WEB-INF&#x2F;lib目录下</h4><p>这里下载就省略了，大家自行找到对应的驱动下载即可，如果本地有maven的仓库，直接使用即可</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 ~]# cd /export/software/</span><br><span class="line">[root@centos7-1 software]# ll</span><br><span class="line">-rw-r--r--. 1 root root    960372 7月  26 17:50 mysql-connector-java-5.1.34.jar</span><br><span class="line">-rw-r--r--. 1 root root   1007502 7月  26 16:51 mysql-connector-java-5.1.47.jar</span><br><span class="line">-rw-r--r--. 1 root root   2132635 7月  26 17:02 mysql-connector-java-8.0.13.jar</span><br><span class="line">[root@centos7-1 software]# docker cp mysql-connector-java-8.0.13.jar confluence:/opt/atlassian/confluence/confluence/WEB-INF/lib/</span><br><span class="line">[root@centos7-1 software]# </span><br></pre></td></tr></table></figure>
+
+<h4 id="l-重启confluence"><a href="#l-重启confluence" class="headerlink" title="l.重启confluence"></a>l.重启confluence</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7-1 software]# docker restart confluence </span><br><span class="line">confluence</span><br><span class="line">[root@centos7-1 software]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS                   PORTS                               NAMES</span><br><span class="line">e6b421dc43d3        atlassian/confluence-server   &quot;/tini -- /entrypoin…&quot;   2 hours ago         Up 5 seconds             0.0.0.0:8090-8091-&gt;8090-8091/tcp    confluence</span><br></pre></td></tr></table></figure>
+
+<h4 id="m-浏览器刷新刚才的页面会看到下面的画面"><a href="#m-浏览器刷新刚才的页面会看到下面的画面" class="headerlink" title="m.浏览器刷新刚才的页面会看到下面的画面"></a>m.浏览器刷新刚才的页面会看到下面的画面</h4><p><img src="https://img-blog.csdnimg.cn/20190812123730651.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="n-创建confluence数据库"><a href="#n-创建confluence数据库" class="headerlink" title="n.创建confluence数据库"></a>n.创建confluence数据库</h4><p><img src="https://img-blog.csdnimg.cn/20190812123948115.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>注意这里需要时utf-8的编码</p>
+<h4 id="o-回到浏览器，填写参数，测试连接，点击”下一步”"><a href="#o-回到浏览器，填写参数，测试连接，点击”下一步”" class="headerlink" title="o.回到浏览器，填写参数，测试连接，点击”下一步”"></a>o.回到浏览器，填写参数，测试连接，点击”下一步”</h4><p><img src="https://img-blog.csdnimg.cn/20190812125754278.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="p-选择”示范站点”"><a href="#p-选择”示范站点”" class="headerlink" title="p.选择”示范站点”"></a>p.选择”示范站点”</h4><p><img src="https://img-blog.csdnimg.cn/20190812130731999.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="q-选择配置用户和组"><a href="#q-选择配置用户和组" class="headerlink" title="q.选择配置用户和组"></a>q.选择配置用户和组</h4><p><img src="https://img-blog.csdnimg.cn/20190812130849765.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="r-填写管理员账号信息"><a href="#r-填写管理员账号信息" class="headerlink" title="r.填写管理员账号信息"></a>r.填写管理员账号信息</h4><p><img src="https://img-blog.csdnimg.cn/20190812130915821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="s-点击”开始”"><a href="#s-点击”开始”" class="headerlink" title="s.点击”开始”"></a>s.点击”开始”</h4><p><img src="https://img-blog.csdnimg.cn/20190812130959800.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="t-创建空间"><a href="#t-创建空间" class="headerlink" title="t.创建空间"></a>t.创建空间</h4><p><img src="https://img-blog.csdnimg.cn/20190812131025201.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="u-可以直接跳过，再点击左上角的”Confluence”图片即可到达首页"><a href="#u-可以直接跳过，再点击左上角的”Confluence”图片即可到达首页" class="headerlink" title="u.可以直接跳过，再点击左上角的”Confluence”图片即可到达首页"></a>u.可以直接跳过，再点击左上角的”Confluence”图片即可到达首页</h4><p><img src="https://img-blog.csdnimg.cn/2019081213105820.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="v-首页如下"><a href="#v-首页如下" class="headerlink" title="v.首页如下"></a>v.首页如下</h4><p><img src="https://img-blog.csdnimg.cn/20190812131201467.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="w-用户语言设置，点击右上角的头像-–-选择”Settings”"><a href="#w-用户语言设置，点击右上角的头像-–-选择”Settings”" class="headerlink" title="w.用户语言设置，点击右上角的头像 – 选择”Settings”"></a>w.用户语言设置，点击右上角的头像 – 选择”Settings”</h4><p><img src="https://img-blog.csdnimg.cn/20190812131234185.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="x-点击”edit”"><a href="#x-点击”edit”" class="headerlink" title="x.点击”edit”"></a>x.点击”edit”</h4><p><img src="https://img-blog.csdnimg.cn/20190812131324488.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="y-选择中文"><a href="#y-选择中文" class="headerlink" title="y.选择中文"></a>y.选择中文</h4><p><img src="https://img-blog.csdnimg.cn/20190812131349423.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="z-再回到首页，你就熟悉了"><a href="#z-再回到首页，你就熟悉了" class="headerlink" title="z.再回到首页，你就熟悉了"></a>z.再回到首页，你就熟悉了</h4><p><img src="https://img-blog.csdnimg.cn/20190812131427892.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="三-授权信息查询"><a href="#三-授权信息查询" class="headerlink" title="三.授权信息查询"></a>三.授权信息查询</h2><p>选择右上方”齿轮图标” —— 选择”一般设置“ —— 拉倒最下面，左侧目录选择”授权细节”<br><img src="https://img-blog.csdnimg.cn/20190812132431559.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>可以看到破解成功！</p>
+<h2 id="三-总结"><a href="#三-总结" class="headerlink" title="三.总结"></a>三.总结</h2><p>到这里整个搭建部署的过程就结束了，后面的使用过程大家可以自己摸索。在整个搭建的过程中遇到了一些问题，在这里整理一下。</p>
+<ul>
+<li>Mysql数据库只支持到5.7，再往后会报错，报错原因应该是代码不兼容，看了confluence的日志，代码直接抛出了该异常，再不懂源码的情况下只能从8.0切回5.7的数据库<br><img src="https://img-blog.csdnimg.cn/20190812131646476.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+<li>confluence要求的内存和磁盘较高，需要给足空间，在日志中可以看到警告<br><img src="https://img-blog.csdnimg.cn/20190812131913811.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20190812131956389.png" alt="在这里插入图片描述"></li>
+<li>还有一些版本上的小问题，大家只要细心应对即可</li>
+</ul>
+<p>如果问题可在博客下方留言。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/杂项/">杂项</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Confluence/">Confluence</a><a href="/tags/Wiki/">Wiki</a><a href="/tags/Docker/">Docker</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    <!-- <a target="_blank" rel="noopener" href="https://github.com/zaomianbao/zaomianbao.github.io/blob/main/LICENSE">
+      License: MIT
+    </a>
+    </br> -->
+    
+    &copy; 2024 枣面包
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
