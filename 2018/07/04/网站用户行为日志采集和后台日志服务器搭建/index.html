@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>网站用户行为日志采集和后台日志服务器搭建 | 枣面包 | 读书、记录、技术、成长</title>
+
+  
+  <meta name="author" content="枣面包">
+  
+
+  
+  <meta name="description" content="枣面包的博客,主要用于发布读书笔记、生活随想、技术文章，记录个人成长经历">
+  
+
+  
+  <meta name="keywords" content="枣面包,zaomianbao,枣面包的博客">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="网站用户行为日志采集和后台日志服务器搭建"/>
+
+  <meta property="og:site_name" content="枣面包"/>
+
+  
+  <meta property="og:image" content="https://www.zaomianbao.com/favicon.ico"/>
+  
+
+  <link href="https://www.zaomianbao.com/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="枣面包" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">枣面包</a>
+    </h1>
+    <p class="site-description">读书、记录、技术、成长</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>网站用户行为日志采集和后台日志服务器搭建</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2018/07/04/网站用户行为日志采集和后台日志服务器搭建/" rel="bookmark">
+        <time class="entry-date published" datetime="2018-07-04T02:49:08.000Z">
+          2018-07-04
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h2><p>网站流量数据统计分析，可以帮助网站管理员、运营人员、推广人员等实时获取网站流量信息，并从流量来源、网站内容、网站访客特性等多方面提供网站分析的数据依据。从而帮助提高网站流量，提升网站用户体验，让访客更多的沉淀下来变成会员或客户，通过更少的投入获取最大化的收入。<br>访问日志指用户访问网站时的所有访问、浏览、点击行为数据。比如点击了 哪一个链接，打开了哪一个页面，采用了哪个搜索项、总体会话时间等。而所有 这些信息都可通过网站日志保存下来。通过分析这些数据，可以获知许多对网站 运营至关重要的信息。采集的数据越全面，分析就能越精准。</p>
+<blockquote>
+<p>日志的生成渠道分为以下两种:</p>
+</blockquote>
+<ul>
+<li>web 服务器软件(httpd、nginx、tomcat)自带的日志记录功能，如 Nginx 的 access.log 日志;</li>
+<li>自定义采集用户行为数据，通过在页面嵌入自定义的 javascript 代码来 获取用户的访问行为(比如鼠标悬停的位置，点击的页面组件等)，然后通过 ajax 请求到后台记录日志，这种方式所能采集的信息会更加全面。</li>
+</ul>
+<blockquote>
+<p>在实际操作中，有以下几个方面的数据可以自定义的采集:</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th align="center">列举</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>系统特征</td>
+<td align="center">比如所采用的操作系统、浏览器、域名和访问速度等</td>
+</tr>
+<tr>
+<td>访问特征</td>
+<td align="center">包括停留时间、点击的 URL、所点击的“页面标签”及标签的属性等</td>
+</tr>
+<tr>
+<td>来源特征</td>
+<td align="center">包括来访 URL，来访 IP 等</td>
+</tr>
+<tr>
+<td>来源特征</td>
+<td align="center">包括所访问的产品编号、产品类别、产品颜色、产品价格、产品 利润、产品数量和特价等级等</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>下面是博主访问京东首页，其自定义采集的数据日志格式的截取部分:</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://mercury.jd.com/log.gif?t=www.100000&amp;m=UA-J2011-1&amp;pin=zaomianbao&amp;uid=1522992113160771150291522&amp;sid=15229913133260771150291522|42&amp;v=je=0$sc=24-bit$sr=1680x1050$ul=en-us$cs=UTF-8$dt=京东(JD.COM)-正品低价、品质保障、配送及时、轻松购物！$hn=www.jd.com$fl=-$os=mac$br=chrome</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-设计架构"><a href="#2-设计架构" class="headerlink" title="2.设计架构"></a>2.设计架构</h2><p><img src="https://img-blog.csdn.net/20180703140801865?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>埋点是指:在网页中预先加入小段 javascript 代码，这个代码片段一般会 动态创建一个 script 标签，并将 src 属性指向一个单独的 js 文件，此时这个单 独的 js 文件会被浏览器请求到并执行，这个 js 往往就是真正 的数据收集脚本。<br>数据收集完成后，js 会请求一个后端的数据收集脚本， 这个脚本一般是一个伪装成图片的动态脚本程序，js 会将收集到的数据通过 http 参数的方式传递给后端脚本，后端脚本解析参数并按固定格式记录到访问 日志，同时可能会在 http 响应中给客户端种植一些用于追踪的 cookie。</p>
+<p>番外：为什么使用请求图片的形式收集?</p>
+<ul>
+<li>这里收集的形式其实有很多种，比如ajax请求，但是在实际生产环境中服务一般都是分布式部署，ajax请求就会涉及到跨域的问题(具体详见:<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_37490221/article/details/80786592">同源策略与通过跨域资源共享实现ajax跨域访问</a>)，而请求图片地址的形式则不在同源策略的限制范围内，即请求图片没有跨域限制。另一方面，请求一个静态资源的速率旺旺比请求一个动态接口要快得多。</li>
+</ul>
+<h2 id="3-设计实现"><a href="#3-设计实现" class="headerlink" title="3.设计实现"></a>3.设计实现</h2><p>步骤：</p>
+<ol>
+<li>确定想要收集的信息</li>
+<li>确定埋点代码</li>
+<li>编写JS前端日志收集脚本</li>
+<li>确定日志格式</li>
+<li>编写后台脚本</li>
+<li>日志切分</li>
+<li>在网站页面进行埋点</li>
+<li>检测日志数据</li>
+</ol>
+<p>选型：这里我们选用Apache作为Web服务器，日志后台服务器使用Nginx处理日志请求，同时将JS前端日志收集脚本直接放置在Nginx服务器内(架构中将其单独部署一个服务器)。</p>
+<h4 id="3-1确定收集的信息"><a href="#3-1确定收集的信息" class="headerlink" title="3.1确定收集的信息"></a>3.1确定收集的信息</h4><table>
+<thead>
+<tr>
+<th>名称</th>
+<th align="center">途径</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>访问时间</td>
+<td align="center">web server</td>
+<td align="center">Nginx $msec</td>
+</tr>
+<tr>
+<td>IP</td>
+<td align="center">web server</td>
+<td align="center">Nginx $remote_addr</td>
+</tr>
+<tr>
+<td>域名</td>
+<td align="center">JavaScript</td>
+<td align="center">document.domain</td>
+</tr>
+<tr>
+<td>URL</td>
+<td align="center">JavaScript</td>
+<td align="center">document.URL</td>
+</tr>
+<tr>
+<td>页面标题</td>
+<td align="center">JavaScript</td>
+<td align="center">document.title</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td align="center">JavaScript</td>
+<td align="center">window.screen.height &amp; width</td>
+</tr>
+<tr>
+<td>颜色深度</td>
+<td align="center">JavaScript</td>
+<td align="center">window.screen.colorDepth</td>
+</tr>
+<tr>
+<td>Referrer</td>
+<td align="center">JavaScript</td>
+<td align="center">document.referrer</td>
+</tr>
+<tr>
+<td>浏览客户端</td>
+<td align="center">web server</td>
+<td align="center">Nginx $http_user_agent</td>
+</tr>
+<tr>
+<td>客户端语言</td>
+<td align="center">javascript</td>
+<td align="center">navigator.language</td>
+</tr>
+<tr>
+<td>访客标识</td>
+<td align="center">cookie</td>
+<td align="center">Nginx $http_cookie</td>
+</tr>
+<tr>
+<td>网站标识</td>
+<td align="center">javascript</td>
+<td align="center">自定义对象</td>
+</tr>
+<tr>
+<td>状态码</td>
+<td align="center">web server</td>
+<td align="center">Nginx $status</td>
+</tr>
+<tr>
+<td>发送内容量</td>
+<td align="center">web server</td>
+<td align="center">Nginx $body_bytes_sent</td>
+</tr>
+</tbody></table>
+<h4 id="3-2埋点代码"><a href="#3-2埋点代码" class="headerlink" title="3.2埋点代码"></a>3.2埋点代码</h4><p>埋点，是网站分析的一种常用的数据采集方法。核心就是在需要进行数据采 集的关键点植入统计代码，进行数据的采集。比如以谷歌分析原型来说，需要在 页面中插入一段它提供的 javascript 片段，这个片段往往被称为 。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=&quot;text/javascript&quot;&gt;</span><br><span class="line">	var _maq = _maq || [];</span><br><span class="line">	_maq.push([&#x27;_setAccount&#x27;, &#x27;zaomianbao&#x27;]);</span><br><span class="line">	(function() &#123;</span><br><span class="line">		var ma = document.createElement(&#x27;script&#x27;); </span><br><span class="line">		ma.type = &#x27;text/javascript&#x27;;</span><br><span class="line">		ma.async = true;</span><br><span class="line">		ma.src = &#x27;http://192.168.214.152/ma.js&#x27;;</span><br><span class="line">		var s = document.getElementsByTagName(&#x27;script&#x27;)[0]; </span><br><span class="line">		s.parentNode.insertBefore(ma, s);</span><br><span class="line">	&#125;)();</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<p>其中_maq 是全局数组，用于放置各种配置，其中每一条配置的格式为:</p>
+<ul>
+<li>_maq.push([‘Action’, ‘param1’, ‘param2’, …]);</li>
+</ul>
+<p>_maq 的机制不是重点，重点是后面匿名函数的代码，这段代码的主要目的<br>就是引入一个外部的 js 文件(ma.js)，方式是通过 document.createElement 方法 创建一个 script 并根据协议(http 或 https)将 src 指向对应的 ma.js，最后将这个 元素插入页面的 dom 树上。<br>注意 ma.async &#x3D; true 的意思是异步调用外部 js 文件，即不阻塞浏览器的解 析，待外部 js 下载完成后异步执行。这个属性是 HTML5 新引入的。</p>
+<blockquote>
+<p>番外：js 自调用匿名函数</p>
+</blockquote>
+<ul>
+<li>格式: (function(){})();</li>
+<li>第一对括号向脚本返回未命名的函数;后一对空括号立即执行返回的未命名函数，括号内为匿名函数的参数。</li>
+<li>自调用匿名函数的好处是，避免重名，自调用匿名函数只会在运行时执行一 次，一般用于初始化。</li>
+</ul>
+<h4 id="3-3前端数据收集脚本"><a href="#3-3前端数据收集脚本" class="headerlink" title="3.3前端数据收集脚本"></a>3.3前端数据收集脚本</h4><p>数据收集脚本(ma.js)被请求后会被执行，一般要做如下几件事:</p>
+<ul>
+<li>1、通过浏览器内置 javascript 对象收集信息，如页面 title(通过 document.title)、 referrer(上一跳 url，通过 document.referrer)、用户显示器分辨率(通过 windows.screen)、cookie 信息(通过 document.cookie)等等一些信息。</li>
+<li>2、解析_maq 数组，收集配置信息。这里面可能会包括用户自定义的事件跟 踪、业务数据(如电子商务网站的商品编号等)等。</li>
+<li>3、将上面两步收集的数据按预定义格式解析并拼接(get 请求参数)。</li>
+<li>4、请求一个后端脚本，将信息放在 http request 参数中携带给后端脚本。</li>
+</ul>
+<p>这里唯一的问题是步骤 4，javascript 请求后端脚本常用的方法是 ajax，但是ajax 是不能跨域请求的。一种通用的方法是 js 脚本创建一个 Image 对象，将 Image 对象的 src 属性指向后端脚本并携带参数，此时即实现了跨域请求后端。这也是 后端脚本为什么通常伪装成 gif 文件的原因。</p>
+<p>示例JS代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">(function () &#123;</span><br><span class="line">    var params = &#123;&#125;;</span><br><span class="line">    //Document对象数据</span><br><span class="line">    if(document) &#123;</span><br><span class="line">        params.domain = document.domain || &#x27;&#x27;; </span><br><span class="line">        params.url = document.URL || &#x27;&#x27;; </span><br><span class="line">        params.title = document.title || &#x27;&#x27;; </span><br><span class="line">        params.referrer = document.referrer || &#x27;&#x27;; </span><br><span class="line">    &#125;   </span><br><span class="line">    //Window对象数据</span><br><span class="line">    if(window &amp;&amp; window.screen) &#123;</span><br><span class="line">        params.sh = window.screen.height || 0;</span><br><span class="line">        params.sw = window.screen.width || 0;</span><br><span class="line">        params.cd = window.screen.colorDepth || 0;</span><br><span class="line">    &#125;   </span><br><span class="line">    //navigator对象数据</span><br><span class="line">    if(navigator) &#123;</span><br><span class="line">        params.lang = navigator.language || &#x27;&#x27;; </span><br><span class="line">    &#125;   </span><br><span class="line">    //解析_maq配置</span><br><span class="line">    if(_maq) &#123;</span><br><span class="line">        for(var i in _maq) &#123;</span><br><span class="line">            switch(_maq[i][0]) &#123;</span><br><span class="line">                case &#x27;_setAccount&#x27;:</span><br><span class="line">                    params.account = _maq[i][1];</span><br><span class="line">                    break;</span><br><span class="line">                default:</span><br><span class="line">                    break;</span><br><span class="line">            &#125;   </span><br><span class="line">        &#125;   </span><br><span class="line">    &#125;   </span><br><span class="line">    //拼接参数串</span><br><span class="line">    var args = &#x27;&#x27;; </span><br><span class="line">    for(var i in params) &#123;</span><br><span class="line">        if(args != &#x27;&#x27;) &#123;</span><br><span class="line">            args += &#x27;&amp;&#x27;;</span><br><span class="line">        &#125;   </span><br><span class="line">        args += i + &#x27;=&#x27; + encodeURIComponent(params[i]);</span><br><span class="line">    &#125;   </span><br><span class="line"> </span><br><span class="line">    //通过Image对象请求后端脚本</span><br><span class="line">    var img = new Image(1, 1); </span><br><span class="line">    img.src = &#x27;http://192.168.214.152/log.gif?&#x27; + args;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>整个脚本放在匿名函数里，确保不会污染全局环境。其中 log.gif 表面上请求静态资源，到了Nginx后台实则为一个后台脚本</p>
+<h4 id="3-4日志格式"><a href="#3-4日志格式" class="headerlink" title="3.4日志格式"></a>3.4日志格式</h4><p>日志格式主要考虑日志分隔符，一般会有以下几种选择:固定数量的字符、制表符分隔符、空格分隔符、其他一个或多个字符、特定的开始和结束文本。<br>我们在 nginx 的配置文件中定义日志格式:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log_format</span><br><span class="line">&quot;$msec||$remote_addr||$status||$body_bytes_sent||$u_domain||$u_url|</span><br><span class="line">|$u_title||$u_referrer||$u_sh||$u_sw||$u_cd||$u_lang||$http_user_ag</span><br><span class="line">ent||$u_account&quot;;</span><br></pre></td></tr></table></figure>
+<p>注意这里以 u_开头的是我们待会会自己定义的变量，其它的是nginx内置变量</p>
+<h4 id="3-5后台脚本"><a href="#3-5后台脚本" class="headerlink" title="3.5后台脚本"></a>3.5后台脚本</h4><p>log.gif 是后端脚本，是一个伪装成 gif 图片的脚本。后端脚本一般需要完 成以下几件事情:</p>
+<ul>
+<li>1、解析 http 请求参数得到信息。</li>
+<li>2、从 Web 服务器中获取一些客户端无法获取的信息，如访客 ip 等。</li>
+<li>3、将信息按格式写入 log。</li>
+<li>4、生成一副 1×1 的空 gif 图片作为响应内容并将响应头的 Content-type设为 image&#x2F;gif。</li>
+<li>5、在响应头中通过 Set-cookie 设置一些需要的 cookie 信息。</li>
+</ul>
+<p>之所以要设置 cookie 是因为如果要跟踪唯一访客，通常做法是如果在请求 时发现客户端没有指定的跟踪 cookie，则根据规则生成一个全局唯一的 cookie 并 种植给用户，否则 Set-cookie 中放置获取到的跟踪 cookie 以保持同一用户 cookie 不变。这种做法虽然不是完美的(例如用户清掉 cookie 或更换浏览器会被认为是两个用户)，但是目前被广泛使用的手段。<br>我们使用 nginx 的 access_log 做日志收集，不过有个问题就是 nginx 配置本身的逻辑表达能力有限，所以选用 OpenResty 做这个事情。</p>
+<blockquote>
+<p>番外：什么是OpenResty?<br>OpenResty是一个基于 Nginx 与 Lua 的高性能 Web 平台，其内部集成了大量精良的 Lua 库、第三方模块以及大多数的依赖项。其中的核心是通过 ngx_lua 模块集成了 Lua，从而在 nginx 配置文 件中可以通过 Lua 来表述业务。而Lua 是一种轻量小巧的脚本语言，用标准 C 语言编写并以源代码形式开放， 其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。</p>
+</blockquote>
+<p>这里给出Nginx配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">worker_processes  2;</span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">	log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span><br><span class="line">                      &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span><br><span class="line">                      &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span><br><span class="line">					  </span><br><span class="line">    log_format user_log_format &quot;$msec||$remote_addr||$status||$body_bytes_sent||$u_domain||$u_url||$u_title||$u_referrer||$u_sh||$u_sw||$u_cd||$u_lang||$http_user_agent||$u_account&quot;;</span><br><span class="line">    </span><br><span class="line">    sendfile        on;  #允许sendfile方式传输文件，默认为off</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65; #连接超时时间，默认为75s</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  localhost;</span><br><span class="line">		location /log.gif &#123;</span><br><span class="line">			#伪装成gif文件</span><br><span class="line">			default_type image/gif;    </span><br><span class="line">			#nginx本身记录的access_log，日志格式为main</span><br><span class="line">			access_log  logs/access.log  main;</span><br><span class="line">		</span><br><span class="line">			access_by_lua &quot;</span><br><span class="line">				-- 用户跟踪cookie名为__utrace</span><br><span class="line">				local uid = ngx.var.cookie___utrace        </span><br><span class="line">				if not uid then</span><br><span class="line">					-- 如果没有则生成一个跟踪cookie，算法为md5(时间戳+IP+客户端信息)</span><br><span class="line">					uid = ngx.md5(ngx.now() .. ngx.var.remote_addr .. ngx.var.http_user_agent)</span><br><span class="line">				end </span><br><span class="line">				ngx.header[&#x27;Set-Cookie&#x27;] = &#123;&#x27;__utrace=&#x27; .. uid .. &#x27;; path=/&#x27;&#125;</span><br><span class="line">				if ngx.var.arg_domain then</span><br><span class="line">				-- 通过subrequest到/i-log记录日志，将参数和用户跟踪cookie带过去</span><br><span class="line">					ngx.location.capture(&#x27;/i-log?&#x27; .. ngx.var.args .. &#x27;&amp;utrace=&#x27; .. uid)</span><br><span class="line">				end </span><br><span class="line">			&quot;;  </span><br><span class="line">		</span><br><span class="line">			#此请求资源本地不缓存</span><br><span class="line">			add_header Expires &quot;Fri, 01 Jan 1980 00:00:00 GMT&quot;;</span><br><span class="line">			add_header Pragma &quot;no-cache&quot;;</span><br><span class="line">			add_header Cache-Control &quot;no-cache, max-age=0, must-revalidate&quot;;</span><br><span class="line">		</span><br><span class="line">			#返回一个1×1的空gif图片</span><br><span class="line">			empty_gif;</span><br><span class="line">		&#125;   </span><br><span class="line">	</span><br><span class="line">		location /i-log &#123;</span><br><span class="line">			#内部location，不允许外部直接访问</span><br><span class="line">			internal;</span><br><span class="line">		</span><br><span class="line">			#设置变量，注意需要unescape</span><br><span class="line">			set_unescape_uri $u_domain $arg_domain;</span><br><span class="line">			set_unescape_uri $u_url $arg_url;</span><br><span class="line">			set_unescape_uri $u_title $arg_title;</span><br><span class="line">			set_unescape_uri $u_referrer $arg_referrer;</span><br><span class="line">			set_unescape_uri $u_sh $arg_sh;</span><br><span class="line">			set_unescape_uri $u_sw $arg_sw;</span><br><span class="line">			set_unescape_uri $u_cd $arg_cd;</span><br><span class="line">			set_unescape_uri $u_lang $arg_lang;</span><br><span class="line">			set_unescape_uri $u_account $arg_account;</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line">			#打开subrequest（子请求）日志</span><br><span class="line">			log_subrequest on;</span><br><span class="line">			#自定义采集的日志，记录数据到user_defined.log</span><br><span class="line">			access_log logs/user_defined.log user_log_format;</span><br><span class="line">		</span><br><span class="line">			#输出空字符串</span><br><span class="line">			echo &#x27;&#x27;;</span><br><span class="line">		&#125;	</span><br><span class="line">	</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="4-系统环境搭建部署"><a href="#4-系统环境搭建部署" class="headerlink" title="4.系统环境搭建部署"></a>4.系统环境搭建部署</h2><p>注：这里是对192.168.214.152日志处理Nignx服务器的搭建，对于web服务器，直接在192.168.214.150服务器上执行yum install httpd即可安装成功。</p>
+<h4 id="4-1准备安装包并上传服务器"><a href="#4-1准备安装包并上传服务器" class="headerlink" title="4.1准备安装包并上传服务器"></a>4.1准备安装包并上传服务器</h4><p>这里自己准备需要的安装包——注：Linux上传方式：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_37490221/article/details/80844825">三种方式实现Linux的文件上传下载</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 software]# cd /export/software/</span><br><span class="line">[root@centos6-3 software]# ll</span><br><span class="line">total 5900</span><br><span class="line">//一个Lua包，一个nginx包，一个openresty包，4个nginx模块包</span><br><span class="line">-rw-r--r--. 1 root root   64779 Jun 26 08:38 echo-nginx-module-0.58.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root  847615 Jun 26 08:38 LuaJIT-2.0.4.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root  569372 Jun 26 08:41 lua-nginx-module-0.10.0.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root  833473 Jun 26 08:38 nginx-1.8.1.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root   65029 Jun 26 08:38 ngx_devel_kit-0.2.19.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root 3616491 Jun 26 08:40 openresty-1.9.7.3.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root   35495 Jun 26 08:38 set-misc-nginx-module-0.29.tar.gz</span><br><span class="line">[root@centos6-3 software]# </span><br></pre></td></tr></table></figure>
+<h4 id="4-2依赖安装"><a href="#4-2依赖安装" class="headerlink" title="4.2依赖安装"></a>4.2依赖安装</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 software]# yum -y install gcc perl pcre-devel openssl openssl-devel</span><br></pre></td></tr></table></figure>
+<h4 id="4-3解压编译安装LuaJIT"><a href="#4-3解压编译安装LuaJIT" class="headerlink" title="4.3解压编译安装LuaJIT"></a>4.3解压编译安装LuaJIT</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 software]#  tar -zxvf LuaJIT-2.0.4.tar.gz -C /usr/local/src/</span><br><span class="line">LuaJIT-2.0.4/</span><br><span class="line">LuaJIT-2.0.4/COPYRIGHT</span><br><span class="line">LuaJIT-2.0.4/Makefile</span><br><span class="line">LuaJIT-2.0.4/README</span><br><span class="line">LuaJIT-2.0.4/doc/</span><br><span class="line">LuaJIT-2.0.4/doc/bluequad-print.css</span><br><span class="line">....</span><br><span class="line">[root@centos6-3 software]# cd /usr/local/src/LuaJIT-2.0.4/</span><br><span class="line">[root@centos6-3 LuaJIT-2.0.4]# make &amp;&amp; make install PREFIX=/usr/local/luajit</span><br><span class="line">==== Building LuaJIT 2.0.4 ====</span><br><span class="line">make -C src</span><br><span class="line">...</span><br><span class="line">[root@centos6-3 LuaJIT-2.0.4]# </span><br></pre></td></tr></table></figure>
+<h4 id="4-4设置LuaJIT环境变量"><a href="#4-4设置LuaJIT环境变量" class="headerlink" title="4.4设置LuaJIT环境变量"></a>4.4设置LuaJIT环境变量</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 LuaJIT-2.0.4]# vi /etc/profile</span><br><span class="line">//文件末尾追加以下内容</span><br><span class="line">export LUAJIT_LIB=/usr/local/luajit/lib</span><br><span class="line">export LUAJIT_INC=/usr/local/luajit/include/luajit-2.0</span><br><span class="line">//更新环境变量</span><br><span class="line">[root@centos6-3 LuaJIT-2.0.4]#  source /etc/profile</span><br><span class="line">[root@centos6-3 LuaJIT-2.0.4]# </span><br></pre></td></tr></table></figure>
+<h4 id="4-5解压modules"><a href="#4-5解压modules" class="headerlink" title="4.5解压modules"></a>4.5解压modules</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 LuaJIT-2.0.4]# mkdir -p /usr/local/nginx/modules</span><br><span class="line">[root@centos6-3 LuaJIT-2.0.4]# cd /export/software/</span><br><span class="line">[root@centos6-3 software]# mv set-misc-nginx-module-0.29.tar.gz /usr/local/nginx/modules/</span><br><span class="line">[root@centos6-3 software]# mv lua-nginx-module-0.10.0.tar.gz /usr/local/nginx/modules/</span><br><span class="line">[root@centos6-3 software]# mv ngx_devel_kit-0.2.19.tar.gz /usr/local/nginx/modules/</span><br><span class="line">[root@centos6-3 software]# mv echo-nginx-module-0.58.tar.gz /usr/local/nginx/modules/</span><br><span class="line">[root@centos6-3 software]# cd /usr/local/nginx/modules/</span><br><span class="line">[root@centos6-3 modules]# ll</span><br><span class="line">total 724</span><br><span class="line">-rw-r--r--. 1 root root  64779 Jun 26 08:38 echo-nginx-module-0.58.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root 569372 Jun 26 08:41 lua-nginx-module-0.10.0.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root  65029 Jun 26 08:38 ngx_devel_kit-0.2.19.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root  35495 Jun 26 08:38 set-misc-nginx-module-0.29.tar.gz</span><br><span class="line">[root@centos6-3 modules]# tar -zxvf lua-nginx-module-0.10.0.tar.gz</span><br><span class="line">[root@centos6-3 modules]# tar -zxvf set-misc-nginx-module-0.29.tar.gz</span><br><span class="line">[root@centos6-3 modules]# tar -zxvf ngx_devel_kit-0.2.19.tar.gz</span><br><span class="line">[root@centos6-3 modules]# tar -zxvf echo-nginx-module-0.58.tar.gz</span><br><span class="line">[root@centos6-3 modules]# ll</span><br><span class="line">total 740</span><br><span class="line">drwxrwxr-x. 6 root root   4096 Jun 22  2015 echo-nginx-module-0.58</span><br><span class="line">-rw-r--r--. 1 root root  64779 Jun 26 08:38 echo-nginx-module-0.58.tar.gz</span><br><span class="line">drwxrwxr-x. 9 root root   4096 Jan 12  2016 lua-nginx-module-0.10.0</span><br><span class="line">-rw-r--r--. 1 root root 569372 Jun 26 08:41 lua-nginx-module-0.10.0.tar.gz</span><br><span class="line">drwxrwxr-x. 9 root root   4096 Sep 26  2013 ngx_devel_kit-0.2.19</span><br><span class="line">-rw-r--r--. 1 root root  65029 Jun 26 08:38 ngx_devel_kit-0.2.19.tar.gz</span><br><span class="line">drwxrwxr-x. 6 root root   4096 Jun 22  2015 set-misc-nginx-module-0.29</span><br><span class="line">-rw-r--r--. 1 root root  35495 Jun 26 08:38 set-misc-nginx-module-0.29.tar.gz</span><br><span class="line">[root@centos6-3 modules]# rm -rf *.tar.gz</span><br><span class="line">[root@centos6-3 modules]# ll</span><br><span class="line">total 16</span><br><span class="line">drwxrwxr-x. 6 root root 4096 Jun 22  2015 echo-nginx-module-0.58</span><br><span class="line">drwxrwxr-x. 9 root root 4096 Jan 12  2016 lua-nginx-module-0.10.0</span><br><span class="line">drwxrwxr-x. 9 root root 4096 Sep 26  2013 ngx_devel_kit-0.2.19</span><br><span class="line">drwxrwxr-x. 6 root root 4096 Jun 22  2015 set-misc-nginx-module-0.29</span><br><span class="line">[root@centos6-3 modules]# </span><br></pre></td></tr></table></figure>
+<h4 id="4-6安装OpenResty"><a href="#4-6安装OpenResty" class="headerlink" title="4.6安装OpenResty"></a>4.6安装OpenResty</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 modules]# cd /export/software/</span><br><span class="line">[root@centos6-3 software]# ll</span><br><span class="line">total 5176</span><br><span class="line">-rw-r--r--. 1 root root  847615 Jun 26 08:38 LuaJIT-2.0.4.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root  833473 Jun 26 08:38 nginx-1.8.1.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root 3616491 Jun 26 08:40 openresty-1.9.7.3.tar.gz</span><br><span class="line">[root@centos6-3 software]# tar -zxvf openresty-1.9.7.3.tar.gz -C /usr/local/src/</span><br><span class="line">[root@centos6-3 software]# cd /usr/local/src/openresty-1.9.7.3/</span><br><span class="line">[root@centos6-3 openresty-1.9.7.3]# ./configure --prefix=/usr/local/openresty --with-luajit &amp;&amp; make &amp;&amp; make install</span><br><span class="line">[root@centos6-3 openresty-1.9.7.3]#</span><br></pre></td></tr></table></figure>
+<h4 id="4-7解压编译安装Nginx"><a href="#4-7解压编译安装Nginx" class="headerlink" title="4.7解压编译安装Nginx"></a>4.7解压编译安装Nginx</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 openresty-1.9.7.3]# cd /export/software/</span><br><span class="line">[root@centos6-3 software]# ll</span><br><span class="line">total 5176</span><br><span class="line">-rw-r--r--. 1 root root  847615 Jun 26 08:38 LuaJIT-2.0.4.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root  833473 Jun 26 08:38 nginx-1.8.1.tar.gz</span><br><span class="line">-rw-r--r--. 1 root root 3616491 Jun 26 08:40 openresty-1.9.7.3.tar.gz</span><br><span class="line">[root@centos6-3 software]# tar -zxvf nginx-1.8.1.tar.gz -C /usr/local/src/</span><br><span class="line">[root@centos6-3 software]# cd /usr/local/src/nginx-1.8.1/</span><br><span class="line">[root@centos6-3 nginx-1.8.1]# ./configure --prefix=/usr/local/nginx \</span><br><span class="line">&gt; --with-ld-opt=&quot;-Wl,-rpath,/usr/local/luajit/lib&quot; \</span><br><span class="line">&gt; --add-module=/usr/local/nginx/modules/ngx_devel_kit-0.2.19 \</span><br><span class="line">&gt; --add-module=/usr/local/nginx/modules/lua-nginx-module-0.10.0 \</span><br><span class="line">&gt; --add-module=/usr/local/nginx/modules/set-misc-nginx-module-0.29 \</span><br><span class="line">&gt; --add-module=/usr/local/nginx/modules/echo-nginx-module-0.58</span><br><span class="line">make -j2</span><br><span class="line">[root@centos6-3 nginx-1.8.1]# make install</span><br></pre></td></tr></table></figure>
+<h4 id="4-8启动检测安装"><a href="#4-8启动检测安装" class="headerlink" title="4.8启动检测安装"></a>4.8启动检测安装</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 nginx-1.8.1]# cd /usr/local/nginx/</span><br><span class="line">[root@centos6-3 nginx]# ll</span><br><span class="line">total 20</span><br><span class="line">drwxr-xr-x. 2 root root 4096 Jul  3 17:09 conf</span><br><span class="line">drwxr-xr-x. 2 root root 4096 Jul  3 17:09 html</span><br><span class="line">drwxr-xr-x. 2 root root 4096 Jul  3 17:09 logs</span><br><span class="line">drwxr-xr-x. 6 root root 4096 Jul  3 16:59 modules</span><br><span class="line">drwxr-xr-x. 2 root root 4096 Jul  3 17:09 sbin</span><br><span class="line">[root@centos6-3 nginx]# ./sbin/nginx -c conf/nginx.conf</span><br><span class="line">[root@centos6-3 nginx]# </span><br></pre></td></tr></table></figure>
+<p>访问192.168.214.152(默认80端口)</p>
+<p><img src="https://img-blog.csdn.net/20180703205314508?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p>后台日志处理Nginx服务器搭建成功！</p>
+<h2 id="5-实施采集测试"><a href="#5-实施采集测试" class="headerlink" title="5.实施采集测试"></a>5.实施采集测试</h2><h4 id="5-1编写index-html"><a href="#5-1编写index-html" class="headerlink" title="5.1编写index.html"></a>5.1编写index.html</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">	&lt;head&gt;</span><br><span class="line">		&lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">		&lt;title&gt;枣面包的面包坊&lt;/title&gt;</span><br><span class="line">	</span><br><span class="line">		&lt;script type=&quot;text/javascript&quot;&gt;</span><br><span class="line">			var _maq = _maq || [];</span><br><span class="line">			_maq.push([&#x27;_setAccount&#x27;, &#x27;zaomianbao&#x27;]);</span><br><span class="line">	 </span><br><span class="line">			(function() &#123;</span><br><span class="line">				var ma = document.createElement(&#x27;script&#x27;); </span><br><span class="line">				ma.type = &#x27;text/javascript&#x27;;</span><br><span class="line">				ma.async = true;</span><br><span class="line">				ma.src = &#x27;http://192.168.214.152/ma.js&#x27;;</span><br><span class="line">				var s = document.getElementsByTagName(&#x27;script&#x27;)[0]; </span><br><span class="line">				s.parentNode.insertBefore(ma, s);</span><br><span class="line">			&#125;)();</span><br><span class="line">		&lt;/script&gt;	</span><br><span class="line">	&lt;/head&gt;</span><br><span class="line">	&lt;body&gt;</span><br><span class="line">		&lt;h1 align=&quot;center&quot;&gt;枣面包的面包坊&lt;/h1&gt;</span><br><span class="line">	&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="5-2部署index-html和ma-js"><a href="#5-2部署index-html和ma-js" class="headerlink" title="5.2部署index.html和ma.js"></a>5.2部署index.html和ma.js</h4><p>在192.168.214.150的Apache服务器部署index.html<br>上传index.html到Apache目录下:&#x2F;var&#x2F;www&#x2F;html<br>注：Linux上传方式：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_37490221/article/details/80844825">三种方式实现Linux的文件上传下载</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-1 html]# rz</span><br><span class="line">rz waiting to receive.</span><br><span class="line">Starting zmodem transfer.  Press Ctrl+C to cancel.</span><br><span class="line">Transferring index.html...</span><br><span class="line">  100%     568 bytes  568 bytes/sec 00:00:01       0 Errors  </span><br><span class="line">[root@centos6-1 html]# ls</span><br><span class="line">index.html</span><br><span class="line">[root@centos6-1 html]#</span><br></pre></td></tr></table></figure>
+
+<p>在192.168.214.152的Nginx服务器部署ma.js<br>上传ma.js到Nginx目录下:&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;html</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 html]# rz</span><br><span class="line">rz waiting to receive.</span><br><span class="line">Starting zmodem transfer.  Press Ctrl+C to cancel.</span><br><span class="line">Transferring ma.js...</span><br><span class="line">  100%       1 KB       1 KB/sec    00:00:01       0 Errors  </span><br><span class="line"></span><br><span class="line">[root@centos6-3 html]# ll</span><br><span class="line">total 11</span><br><span class="line">-rw-r--r--. 1 root root  537 Jul  3 17:09 50x.html</span><br><span class="line">-rw-r--r--. 1 root root 1249 Jul  3  2018 ma.js</span><br></pre></td></tr></table></figure>
+<h4 id="5-3修改Nginx配置文件"><a href="#5-3修改Nginx配置文件" class="headerlink" title="5.3修改Nginx配置文件"></a>5.3修改Nginx配置文件</h4><p>将nginx.conf文件修改成上面3.5的内容，这里不做重复，读者在按照博主上面系统环境搭建部署完成后，可以直接复制配置内容使用，可以不必对配置中使用到的lua语义过分深究</p>
+<h4 id="5-4启动Apache，Nginx"><a href="#5-4启动Apache，Nginx" class="headerlink" title="5.4启动Apache，Nginx"></a>5.4启动Apache，Nginx</h4><p>启动192.168.214.150下的Apache</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-1 html]# httpd</span><br><span class="line">[root@centos6-1 html]# ps -ef|grep httpd</span><br><span class="line">root      42392      1  0 19:41 ?        00:00:00 httpd</span><br><span class="line">apache    42393  42392  0 19:41 ?        00:00:00 httpd</span><br><span class="line">apache    42394  42392  0 19:41 ?        00:00:00 httpd</span><br><span class="line">apache    42395  42392  0 19:41 ?        00:00:00 httpd</span><br><span class="line">apache    42396  42392  0 19:41 ?        00:00:00 httpd</span><br><span class="line">apache    42397  42392  0 19:41 ?        00:00:00 httpd</span><br><span class="line">apache    42398  42392  0 19:41 ?        00:00:00 httpd</span><br><span class="line">apache    42399  42392  0 19:41 ?        00:00:00 httpd</span><br><span class="line">apache    42400  42392  0 19:41 ?        00:00:00 httpd</span><br><span class="line">root      42404  42010  0 19:42 pts/0    00:00:00 grep httpd</span><br><span class="line">[root@centos6-1 html]# </span><br></pre></td></tr></table></figure>
+<p>启动192.168.214.152下的Nginx</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 nginx]# sbin/nginx -c conf/nginx.conf</span><br><span class="line">[root@centos6-3 nginx]# ps -ef|grep nginx</span><br><span class="line">root      50763      1  0 19:31 ?        00:00:00 nginx: master process sbin/nginx -c conf/nginx.conf</span><br><span class="line">nobody    50764  50763  0 19:31 ?        00:00:00 nginx: worker process        </span><br><span class="line">nobody    50765  50763  0 19:31 ?        00:00:00 nginx: worker process        </span><br><span class="line">root      50792  50325  0 19:43 pts/0    00:00:00 grep nginx</span><br></pre></td></tr></table></figure>
+<h4 id="5-5请求测试观察"><a href="#5-5请求测试观察" class="headerlink" title="5.5请求测试观察"></a>5.5请求测试观察</h4><p>在192.168.214.152的nginx目录下执行命令实时观察日志变化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 nginx]# tail -f logs/user_defined.log </span><br></pre></td></tr></table></figure>
+<p>页面访问192.168.214.150的index.html页面触发<br><img src="https://img-blog.csdn.net/20180704003353913?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"><br>发现请求到了ma.js文件，同时发送了log.gif请求并且状态为200，即请求成功。再去刚才实时观察的shell窗口发现日志已经被收集</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@centos6-3 nginx]# tail -f logs/user_defined.log</span><br><span class="line">1530618381.695||192.168.214.1||200||0||192.168.214.150||http://192.168.214.150/||\xE6\x9E\xA3\xE9\x9D\xA2\xE5\x8C\x85\xE7\x9A\x84\xE9\x9D\xA2\xE5\x8C\x85\xE5\x9D\x8A||||1050||1680||24||en-US||Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36||zaomianbao</span><br></pre></td></tr></table></figure>
+<h2 id="6-总结"><a href="#6-总结" class="headerlink" title="6.总结"></a>6.总结</h2><p>到这里一个整体的结构就成功构建好了，后面使用就行了，当然，这里只有访问页面的触发，并没有添加用户点击事件，这个留给读者在使用中根据业务添加即可。以上内容并没有假如日志切分的展现，读者直接添加即可。本篇博客的架构设计经过优化是可以运用到生产实际当中的。如有错误，欢迎指正。</p>
+<hr>
+<p>参考资料：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http://openresty.org/en/</span><br><span class="line">http://nginx.org/en/download.html</span><br><span class="line">https://blog.csdn.net/weixin_37490221/article/details/80849163</span><br><span class="line">http://www.lua.org/about.html</span><br><span class="line">http://www.runoob.com/lua/lua-tutorial.html</span><br><span class="line">以及博主学习使用的PDF文档</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/数据开发/">数据开发</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/日志采集/">日志采集</a><a href="/tags/大数据采集/">大数据采集</a><a href="/tags/nginx/">nginx</a><a href="/tags/hadoop/">hadoop</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    <!-- <a target="_blank" rel="noopener" href="https://github.com/zaomianbao/zaomianbao.github.io/blob/main/LICENSE">
+      License: MIT
+    </a>
+    </br> -->
+    
+    &copy; 2024 枣面包
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
