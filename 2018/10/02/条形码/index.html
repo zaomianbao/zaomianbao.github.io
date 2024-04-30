@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>条形码 | 枣面包 | 读书、记录、技术、成长</title>
+
+  
+  <meta name="author" content="枣面包">
+  
+
+  
+  <meta name="description" content="枣面包的博客,主要用于发布读书笔记、生活随想、技术文章，记录个人成长经历">
+  
+
+  
+  <meta name="keywords" content="枣面包,zaomianbao,枣面包的博客">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="条形码"/>
+
+  <meta property="og:site_name" content="枣面包"/>
+
+  
+  <meta property="og:image" content="https://www.zaomianbao.com/favicon.ico"/>
+  
+
+  <link href="https://www.zaomianbao.com/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="枣面包" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">枣面包</a>
+    </h1>
+    <p class="site-description">读书、记录、技术、成长</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/tags">标签</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>条形码</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2018/10/02/条形码/" rel="bookmark">
+        <time class="entry-date published" datetime="2018-10-02T07:54:32.000Z">
+          2018-10-02
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>昨晚在火车上看到了《编码》这本书里面对条形码的介绍，感觉还是比较有意思的，在这里以博文的形式介绍给大家。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>现实生活中，二进制数的表现形式就是无所不在的通用产品代码（UPC，Universal Product Code），这个小条形码出现在差不多我们日常所购买的所有商品的包装上。UPC已经成为计算机逐步进入人们日常生活的标志之一。<br>使用它的初衷仅仅是为了实现零售业的结算和存货管理的自动化，而且他在这方面的应用也很成功。当UPC与一个设计精巧的结账系统结合使用时，顾客会得到一张逐项开列的消费清单，这点是传统的现金出纳员所无法做到的。<br>有趣的是，UPC也是二进制码，尽管乍看起来她并不太像。将UPC解码并看看UPC到底是怎样工作的，就明白了。<br>在最常见的形式中，UPC是由30条不同宽度的垂直黑色条纹组成的，它们的间隔宽度也不同，条纹下面标有数字。例如，以下是Campbell公式出品的10 3&#x2F;4 盎司的罐装鸡汁面汤包上的UPC。<br><img src="https://img-blog.csdn.net/20181002201625452?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>我们要试着将条形码形象地看成是细条和黑条、窄间隙和宽间隙的排列，事实上，这就是观察条形码的一种方式。在UPC中，黑色条纹有四种不同的宽度，宽条纹的宽度分别是最细条纹宽度的两倍、三倍或四倍。同样，宽间隙的宽度分别是最窄间隙宽度的两倍、三倍或四倍。<br>但是，另一种解读UPC的方式就是将它们看做一列比特位。记住整个条形码不是在收银台的扫描仪“看到”的那样。扫描仪所读到的并不是下面一排数字，因为这需要更精密的光学识别（OCR，Optical Character Recognition）技术。扫描仪只识别这个条形码的一条窄带，条形码做得很大是为了便于结算台的操作人员用扫描仪对准。扫描仪所看到的哪一个UPC断面可以这样表示：<br><img src="https://img-blog.csdn.net/20181002205346964?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>看起来与摩尔斯密码很像不是吗？<br>当计算机从左向右扫描这个信息时，它会首先给遇到的第一个黑条分配一个值为1的比特，给与这个黑条相邻的白色间隙分配一个值为0的比特。随后的条纹和间隙被读作一行中的一些列比特，每个系列的比特可以是1为、2位、3位或4位，而这个位数取决于条纹和空隙的宽度。本例中扫描仪所扫描的条形码与比特位之间的关系可以简单得表示为：<br><img src="https://img-blog.csdn.net/20181002205809418?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>因此，整个UPC只不过是一串95位二进制数。在本例中，这些比特可以做如下分组。前3位通常都是101，这就是最左边的护线，它帮助计算机扫描仪定位。从护线中，扫描仪可以确定代表单个比特的条和间隙的宽度是多少。否则，所有包装上的UPC就都得采用指定的大小了。<br>最左边的护线之后是6组比特串，每串含有7个比特位。其中每一组都可以是数字0 ~ 9 的编码，后面我会做一个简短的说明。接下来是一个5比特位的中间护线，这是一个固定的模式（始终是01010），它是内置式的检错码。如果计算机扫描仪没有在应有的位置找到中间护线，它就无法破解UPC码。这条中间护线是用来预防条形码被篡改或被印错的一种方法。</p>
+<p><img src="https://img-blog.csdn.net/20181002210537551?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>中间护线后面仍是6组比特串，每组中含有7个比特位。之后是最右边的护线，最右边的护线通常都为101.最右边的护线可以实现UPC的反向扫描，这一点我们将在后面解释。<br>因此，整个UPC对12个数字进行了编码。UPC的左边含有6个编码数字，每个数字占有7个比特位。你可以利用如下的表格来解码。<br><img src="https://img-blog.csdn.net/20181002211045837?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>注意，这里每个7位编码都是以0开头，以1结尾的。如果扫面议遇到了一个位于左边的7位编码，这个编码是以1开头以0结尾的，那么它就知道自己没有将UPC正确地读入或者条形码被篡改了。另外我们还注意到每组编码都仅有两组连续为1的比特位，这就暗示每个数字对应着UPC码中的两个垂直条纹。<br>你也会发现，上表中每组编码都含有奇数个1。这是另一种检查错误和一致性的方法，称为奇偶校验。如果一组比特位中含有偶数个1，它就称为偶校验；如果含有奇数个1，那么它就称为奇校验。这样看来，所有这些编码都拥有奇校验。<br>破解右边的6组7位编码要用到下表。<br><img src="https://img-blog.csdn.net/20181002211950200?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>这些编码都是之前编码的补码：之前出现0的地方，现在都换成1，反之亦然。这些编码都是以1开头以0结尾的。除此之外，每组编码都含有偶数个1，属于偶校验。<br>现在，我们就可以解读UPC了。运用以上两个表格，我们可以确定，Campbell公司的10 3&#x2F;4盎司罐装鸡汁面汤包上的12个数字为：<br>$$0 \quad 51000 \quad 01251 \quad  7$$<br>太令人失望了。就如你所看到的，这与UPC下面所印刷的数字完全相同（这样做事很有意义的，在扫描仪由于某种原因无法解读出条形码时，收银员就可以手动输入这些数字，毫无疑问你也看到过这一幕）。我们没有必要了解解码的全部过程，况且，我们也无法从中解码出任何秘密信息。不过，关于UPC的解码工作已经没有什么可做了，那30根竖条已经变成了12个数字。<br>第一个数字（这里是0）被称为数字系统符。0意味着这是一个常规的UPC。如果UPC出现在杂货店中那些需要称重的商品上，例如肉、农产品，这个编码就是2。票券的UPC的第一位数字通常是5.<br>接下来的5个数字表示制造商编码。这种情况下，51000就是Campbell公司的编码。所有Campbell公司的产品都有这个编码。后面的5位代码（01251）是这个公司的某种商品的编码，上例中这个数字就是指10 3&#x2F;4 盎司罐装鸡汁面。只有和制造商编码同时出现的时候这个编码才有意义。另一个公司的鸡汁面会有另外一个编码，01251在另外一个公司可能是指一种完全不同的产品。<br>与大家通常的想法相反，UPC不包含物品的价格信息。价格信息可以从商店使用的与该扫描仪相连的计算机中检索到。<br>最后一个数字（在这里是7）称为模校验字符。这个字符可用来进行另外一种错误校验。为了了解它是如何工作的，我们将前11个数字（在这个例子中是 0 51000 01251）各用一个字母来代替：<br>$$A \quad BCDEF \quad GHIJK$$<br>然后，计算下式的值：</p>
+<p>$$3 \times (A + C + E + G + I + K) + (B + D + F + H + J)$$</p>
+<p>从离这个值最近并且大于或等于它的一个10的整倍数中减去它，其结果称为模校验字符（modulo check character）。在Campbell鸡汁面的例子中，有：</p>
+<p>$$3 \times (0 + 1 + 0 + 0 + 2 + 1) + (5 + 0 + 0 + 1 + 5) &#x3D; 3 \times 4 + 11 &#x3D; 23$$</p>
+<p>紧挨23并且大于或者等于23的10的整数倍是30，因此：</p>
+<p>$$30 - 23 &#x3D; 7$$</p>
+<p>这就是印在外包装上并以UPC形式编码的模校验字符，这是一种冗余措施。如果扫描仪没有扫描到与计算机计算结果相同的模校验字符，那么计算机就视这个UPC无效。<br>通常情况下，要表示0 ~ 9 的十进制数字只需要4个比特位就足够了。UPC中每个数字用了7个比特位。这样，UPC总共用了95个比特位来表示11个有效的十进制数。实际上，UPC中还有空白位置（相当于9个0比特），它们位于左、右护线的两侧。这就意味着，整个UPC需要113个比特位来编码11个十进制数，平均每个十进制数所用的比特位超过了10个。<br>如我们所看到的，有部分冗余对于检错来讲是必要的。这种商品编码如果能够被顾客用笔轻易地改动，那么这种产品编码措施也就没有任何意义了。<br>UPC可以从两个方向读，这一点是非常方便的。如果扫描装置解码的第一个数是符合偶校验（即7位编码中有偶数个1）的，扫描仪就会知道，它正从右向左扫描UPC码。计算机就会使用如下表来解码：<br><img src="https://img-blog.csdn.net/20181002220051452?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>以下是对左边数字的解码表：<br><img src="https://img-blog.csdn.net/20181002220122183?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzQ5MDIyMQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="在这里插入图片描述"></p>
+<p>所以这些7位编码都是与由左向右扫描时得到的UPC完全不同。这里不会有模棱两可的现象存在。</p>
+<h2 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h2><p>此博文是对《编码》一书的直接引用，侵删。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/读书/">读书</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/条形码/">条形码</a><a href="/tags/二进制/">二进制</a><a href="/tags/编码/">编码</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    <!-- Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br> -->
+    <!-- <a target="_blank" rel="noopener" href="https://github.com/zaomianbao/zaomianbao.github.io/blob/main/LICENSE">
+      License: MIT
+    </a>
+    </br> -->
+    
+    &copy; 2024 枣面包
+    
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+</body>
+</html>
