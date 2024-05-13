@@ -86,7 +86,7 @@
   <div class="article-content">
     <div class="entry">
       
-        <p>我看的是2022-07-01由浙江大学出版社出版的版本，ISBN：9787308224734，作者是肖星，这个版本应该是属于第三版，第一版是14年，第二版是19年，22年是第三版。不同的版本版本的变更除了上一版中的一些错误和疏漏，还包括一下两个部分：</p>
+        <p>我看的是2022-07-01由浙江大学出版社出版的版本，ISBN：9787308224734，作者是肖星，这个版本应该是属于第三版，第一版是14年，第二版是19年，22年是第三版。不同的版本版本的变更除了上一版中的一些错误和疏漏，还包括以下两个部分：</p>
 <ol>
 <li>由于会计准则的变更对书中涉及的概念和会计处理进行的更新</li>
 <li>为更加贴合书中的分析框架进行的相关案例的变化</li>
@@ -98,7 +98,94 @@
 <li><strong>利润表</strong></li>
 <li><strong>现金流量表</strong></li>
 </ul>
-<p>这三张财务报表。</p>
+<p>这三张财务报表</p>
+<pre class="mermaid">flowchart LR
+    A(财务报表) --> B(资产负债表)
+    A --> C(利润表)
+    A --> D(现金流量表)</pre>
+
+<h1 id="一-资产负债表"><a href="#一-资产负债表" class="headerlink" title="一. 资产负债表"></a>一. 资产负债表</h1><p>先给一张资产负债表的示例图：<br><img src="https://img-blog.csdnimg.cn/direct/0742b31e22ea447d9bc7954407fb9841.jpeg#pic_center" alt="资产负债表"></p>
+<p>资产负债表包括：</p>
+<ul>
+<li>资产<ul>
+<li>流动资产<ul>
+<li>货币资金</li>
+<li>应收账款</li>
+<li>预付款项</li>
+<li>其他应收款</li>
+<li>存货</li>
+<li>其他流动资产</li>
+</ul>
+</li>
+<li>非流动资产<ul>
+<li>长期股权投资</li>
+<li>固定资产</li>
+<li>无形资产</li>
+<li>长期待摊费用</li>
+<li>其他非流动资产</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>负债和股东权益<ul>
+<li>流动负债<ul>
+<li>短期借款</li>
+<li>应付账款</li>
+<li>预收款项</li>
+<li>其他应付款</li>
+<li>其他(应付职工薪酬、应交税费等)</li>
+</ul>
+</li>
+<li>非流动负债<ul>
+<li>长期借款</li>
+<li>应付债券</li>
+<li>长期应付款</li>
+<li>其他非流动负债</li>
+</ul>
+</li>
+<li>股东权益<ul>
+<li>股本</li>
+<li>资本公积</li>
+<li>盈余公积</li>
+<li>未分配利润</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre class="mermaid">flowchart LR
+    A(资产负债表) --> B(资产)
+    A --> C(负债和股东权益)
+    B --> D(流动资产)
+    B --> E(非流动资产)
+    C --> F(流动负债)
+    C --> G(非流动负债)
+    C --> H(股东权益)
+    D --> I(货币资金)
+    D --> J(应收账款)
+    D --> K(预付款项)
+    D --> L(其他应收款)
+    D --> M(存货)
+    D --> N(其他流动资产)
+    E --> O(长期股权投资)
+    E --> P(固定资产)
+    E --> Q(无形资产)
+    E --> R(长期待摊费用)
+    E --> S(其他非流动资产)
+    F --> T(短期借款)
+    F --> U(应付账款)
+    F --> V(预收款项)
+    F --> W(其他应付款)
+    F --> X(其他，包括应付职工薪酬、应交税费等)
+    G --> Y(长期借款)
+    G --> Z(应付债券)
+    G --> AA(长期应付款)
+    G --> BB(其他非流动负债)
+    H --> CC(股本)
+    H --> DD(资本公积)
+    H --> EE(盈余公积)
+    H --> FF(未分配利润)</pre>
+
 
       
     </div>
@@ -144,7 +231,8 @@
 
     </main>
 
-    <footer class="site-footer">
+    <script src="https://cdn.bootcdn.net/ajax/libs/mermaid/8.13.8/mermaid.min.js"></script>
+<footer class="site-footer">
   <p class="site-info">
     <!-- Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
     Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
